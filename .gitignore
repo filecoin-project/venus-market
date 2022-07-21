@@ -6,6 +6,7 @@
 *.dylib
 badgerStAskDb/
 *.puml
+market-client
 venus-market
 sequence_chart.md
 .idea
