@@ -85,12 +85,18 @@ var pieceStorageAddS3Cmd = &cli.Command{
 		&cli.StringFlag{
 			Name:    "endpoint",
 			Aliases: []string{"e"},
-			Usage:   "endpoint of the S3 bucket",
+			Usage:   "endpoint of the S3 storage provider",
 		},
 		// name
 		&cli.StringFlag{
 			Name:    "name",
 			Aliases: []string{"n"},
+			Usage:   "name of the S3 piece storage",
+		},
+		// bucket
+		&cli.StringFlag{
+			Name:    "bucket",
+			Aliases: []string{"b"},
 			Usage:   "name of the S3 bucket",
 		},
 	},
@@ -108,6 +114,9 @@ var pieceStorageAddS3Cmd = &cli.Command{
 		}
 		if !cctx.IsSet("name") {
 			return fmt.Errorf("name is required")
+		}
+		if !cctx.IsSet("bucket") {
+			return fmt.Errorf("bucket is required")
 		}
 
 		// get access key , secret key ,token interactivelly
@@ -140,8 +149,9 @@ var pieceStorageAddS3Cmd = &cli.Command{
 		readOnly := cctx.Bool("readonly")
 		endpoint := cctx.String("endpoint")
 		name := cctx.String("name")
+		bucket := cctx.String("bucket")
 
-		err = nodeApi.AddS3PieceStorage(ctx, readOnly, endpoint, name, accessKey, secretKey, token)
+		err = nodeApi.AddS3PieceStorage(ctx, readOnly, endpoint, bucket, name, accessKey, secretKey, token)
 		if err != nil {
 			return err
 		}
@@ -183,10 +193,10 @@ var pieceStorageListCmd = &cli.Command{
 
 		for _, storage := range storagelist.S3Storage {
 			w.Write(map[string]interface{}{
-				"Name":                storage.Name,
-				"Readonly":            storage.ReadOnly,
-				"Path or Enter point": storage.EndPoint,
-				"Type":                "S3",
+				"Name":           storage.Name,
+				"Readonly":       storage.ReadOnly,
+				"Path or Bucket": storage.EndPoint + "/" + storage.Bucket,
+				"Type":           "S3",
 			})
 		}
 
