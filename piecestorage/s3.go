@@ -24,24 +24,19 @@ import (
 
 var log = logging.Logger("piece-storage")
 
-func parseS3Endpoint(endPoint string) (string, string, string, error) {
+func parseS3Endpoint(endPoint string) (string, string, error) {
 	endPointUrl, err := url.Parse(endPoint)
 	if err != nil {
-		return "", "", "", fmt.Errorf("parser s3 endpoint %s %w", endPoint, err)
+		return "", "", fmt.Errorf("parser s3 endpoint %s %w", endPoint, err)
 	}
 
 	hostSeq := strings.Split(endPointUrl.Host, ".")
 	if len(hostSeq) < 2 {
-		return "", "", "", fmt.Errorf("must specify region in host %s", endPoint)
+		return "", "", fmt.Errorf("must specify region in host %s", endPoint)
 	}
-
-	if endPointUrl.Path == "" {
-		return "", "", "", fmt.Errorf("must append bucket in endpoint %s", endPoint)
-	}
-	bucket := strings.Trim(endPointUrl.Path, "/")
 
 	endPointUrl.Path = ""
-	return endPointUrl.String(), hostSeq[0], bucket, nil
+	return endPointUrl.String(), hostSeq[0], nil
 }
 
 type s3PieceStorage struct {
@@ -52,7 +47,9 @@ type s3PieceStorage struct {
 }
 
 func newS3PieceStorage(s3Cfg *config.S3PieceStorage) (IPieceStorage, error) {
-	endpoint, region, bucket, err := parseS3Endpoint(s3Cfg.EndPoint)
+	endpoint, region, err := parseS3Endpoint(s3Cfg.EndPoint)
+	bucket := s3Cfg.Bucket
+
 	if err != nil {
 		return nil, err
 	}
