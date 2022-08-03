@@ -881,8 +881,8 @@ func (m MarketNodeImpl) AddFsPieceStorage(ctx context.Context, readonly bool, pa
 	return m.Config.AddFsPieceStorage(ifs)
 }
 
-func (m MarketNodeImpl) AddS3PieceStorage(ctx context.Context, readonly bool, endpoit string, name string, accessKeyID string, secretAccessKey string, token string) error {
-	ifs := &config.S3PieceStorage{ReadOnly: readonly, EndPoint: endpoit, Name: name, AccessKey: accessKeyID, SecretKey: secretAccessKey, Token: token}
+func (m MarketNodeImpl) AddS3PieceStorage(ctx context.Context, readonly bool, endpoit string, bucket string, name string, accessKeyID string, secretAccessKey string, token string) error {
+	ifs := &config.S3PieceStorage{ReadOnly: readonly, EndPoint: endpoit, Name: name, Bucket: bucket, AccessKey: accessKeyID, SecretKey: secretAccessKey, Token: token}
 	s3ps, err := piecestorage.NewS3PieceStorage(ifs)
 	if err != nil {
 		return err
